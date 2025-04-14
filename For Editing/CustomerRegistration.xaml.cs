@@ -14,6 +14,7 @@ using System.Threading;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using CurrencyTextBoxControl;
+using System.Data.SqlClient;
 
 namespace DerkAndresBoardingHauzManagementSystem.Core.Pages
 {
@@ -35,6 +36,35 @@ namespace DerkAndresBoardingHauzManagementSystem.Core.Pages
             filledCount = 0;
             currentProgress = 0;
         }
+    }
+     public class DatabaseHelper
+    {
+        private string connectionString = "Server=YOUR_SERVER_NAME;Database=YOUR_DATABASE_NAME;Trusted_Connection=True;";
+
+        public void InsertTenant(string fullName, string contactNumber, DateTime birthDate, string address, string degree, string yearLevel, string emergencyContact)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "INSERT INTO Tenants (FullName, ContactNumber, BirthDate, Address, Degree, YearLevel, EmergencyContact) " +
+                               "VALUES (@FullName, @ContactNumber, @BirthDate, @Address, @Degree, @YearLevel, @EmergencyContact)";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@FullName", fullName);
+                    command.Parameters.AddWithValue("@ContactNumber", contactNumber);
+                    command.Parameters.AddWithValue("@BirthDate", birthDate);
+                    command.Parameters.AddWithValue("@Address", address);
+                    command.Parameters.AddWithValue("@Degree", degree);
+                    command.Parameters.AddWithValue("@YearLevel", yearLevel);
+                    command.Parameters.AddWithValue("@EmergencyContact", emergencyContact);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+    }
+}
 
         private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
